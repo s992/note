@@ -18,6 +18,18 @@ impl Note {
     }
 }
 
+#[derive(Debug)]
+pub struct Book {
+    pub path: PathBuf,
+    pub name: String,
+}
+
+impl Book {
+    pub fn note_count(&mut self) -> usize {
+        count_notes(&self.path).unwrap()
+    }
+}
+
 pub fn get_base_path() -> Result<PathBuf> {
     let home = home_dir().unwrap();
     let mut path = PathBuf::new();
@@ -36,13 +48,17 @@ pub fn get_book_path(book: &String) -> Result<PathBuf> {
     Ok(path)
 }
 
-pub fn get_books() -> Result<Vec<String>> {
+pub fn get_books() -> Result<Vec<Book>> {
     let path = get_base_path()?;
     let paths = read_dir(path)?;
-    let mut books: Vec<String> = Vec::new();
+    let mut books = Vec::new();
 
     for book in paths {
-        books.push(book.unwrap().file_name().into_string().unwrap());
+        let entry = book.unwrap();
+        let name = entry.file_name().into_string().unwrap();
+        let path = entry.path();
+
+        books.push(Book { name, path });
     }
 
     Ok(books)
@@ -108,6 +124,12 @@ pub fn open_editor(path: &PathBuf) -> Result<ExitStatus> {
         .spawn()
         .expect("Failed to open $EDITOR")
         .wait()
+}
+
+fn count_notes(path: &PathBuf) -> Result<usize> {
+    let files = read_dir(path)?;
+
+    Ok(files.count())
 }
 
 fn get_note_index(path: &PathBuf) -> Result<usize> {

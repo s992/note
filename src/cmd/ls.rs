@@ -17,10 +17,10 @@ pub fn run(book: Option<String>) -> () {
 fn print_notes(book: String, mut notes: Vec<lib::Note>) -> () {
     notes.sort_by_key(|n| n.index);
 
-    println!("{r}{b}{count} notes for {book}:{reset}",
+    println!("{blue}{b}{count} notes for {book}:{reset}",
              count = notes.len(),
              book = book,
-             r = color::Fg(color::LightGreen),
+             blue = color::Fg(color::Blue),
              b = style::Bold,
              reset = style::Reset,
     );
@@ -50,18 +50,22 @@ fn print_notes(book: String, mut notes: Vec<lib::Note>) -> () {
     }
 }
 
-fn print_books(books: Vec<String>) -> () {
-    println!("{r}{b}{count} books:{reset}",
+fn print_books(books: Vec<lib::Book>) -> () {
+    println!("{blue}{b}{count} books:{reset}",
              count = books.len(),
-             r = color::Fg(color::LightGreen),
+             blue = color::Fg(color::Blue),
              b = style::Bold,
              reset = style::Reset,
     );
     println!();
 
-    for book in books {
-        println!("{y}{book}{reset}",
-                 book = book,
+    for mut book in books {
+        let count = book.note_count();
+        let name = book.name;
+
+        println!("{book} ({y}{count}{reset})",
+                 book = name,
+                 count = count,
                  y = color::Fg(color::Yellow),
                  reset = style::Reset,
         )
