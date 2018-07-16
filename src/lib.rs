@@ -81,6 +81,16 @@ pub fn get_notes(book: &String) -> Result<Vec<Note>> {
     Ok(notes)
 }
 
+pub fn get_note(book: &String, index: usize) -> Result<Note> {
+    let mut path = get_book_path(&book)?;
+    path.push(index.to_string());
+    path.set_extension("txt");
+
+    let contents = read_note(&path)?;
+
+    Ok(Note { path, index, contents })
+}
+
 pub fn get_next_index(book: String) -> Result<usize> {
     let path = get_book_path(&book)?;
     let paths = read_dir(path)?;
