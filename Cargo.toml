@@ -1,6 +1,10 @@
 [package]
 name = "note"
 version = "0.1.0"
-authors = ["Sean Walsh <sean@dronedeploy.com>"]
+authors = ["Sean Walsh <sean@swalsh.org>"]
 
 [dependencies]
+docopt = "1"
+serde = "1.0"
+serde_derive = "1.0"
+termion = "1.0"
