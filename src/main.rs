@@ -28,7 +28,7 @@ struct Args {
     cmd_edit: bool,
     arg_book: Option<String>,
     arg_note: Option<String>,
-    arg_note_index: u64,
+    arg_note_index: usize,
 }
 
 fn main() {
@@ -39,7 +39,7 @@ fn main() {
     match args {
         Args { cmd_add: true, .. } => cmd::add::run(args.arg_book.unwrap(), args.arg_note),
         Args { cmd_ls: true, .. } => cmd::ls::run(args.arg_book),
-        Args { cmd_edit: true, .. } => println!("editing"),
+        Args { cmd_edit: true, .. } => cmd::edit::run(args.arg_book.unwrap(), args.arg_note_index, args.arg_note),
         _ => process::exit(1)
     }
 }

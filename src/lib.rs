@@ -2,7 +2,7 @@ use std::fs::{File, read_dir, read_to_string};
 use std::io::{Result, prelude::*};
 use std::env::{home_dir, temp_dir, var_os};
 use std::path::PathBuf;
-use std::process::Command;
+use std::process::{Command, ExitStatus};
 
 #[derive(Debug)]
 pub struct Note {
@@ -91,21 +91,23 @@ pub fn editor() -> String {
         Err(e) => panic!("File error: {}", e)
     };
 
+    match open_editor(&tmppath) {
+        Ok(_) => read_to_string(tmppath).expect("Unable to read temporary file."),
+        Err(e) => panic!("Failed to open $EDITOR: {}", e)
+    }
+}
+
+pub fn open_editor(path: &PathBuf) -> Result<ExitStatus> {
     let editor = match var_os("EDITOR") {
         Some(val) => val.into_string().unwrap(),
         None => String::from("vi"),
     };
 
-    let command = Command::new(editor)
-        .arg(tmppath.display().to_string())
+    Command::new(editor)
+        .arg(path.display().to_string())
         .spawn()
         .expect("Failed to open $EDITOR")
-        .wait();
-
-    match command {
-        Ok(_) => read_to_string(tmppath).expect("Unable to read temporary file."),
-        Err(e) => panic!("Failed to open $EDITOR: {}", e)
-    }
+        .wait()
 }
 
 fn get_note_index(path: &PathBuf) -> Result<usize> {
