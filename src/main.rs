@@ -1,5 +1,7 @@
 #[macro_use]
 extern crate serde_derive;
+#[macro_use]
+extern crate text_io;
 extern crate docopt;
 extern crate termion;
 
@@ -20,6 +22,8 @@ Usage:
     note ls
     note ls <book>
     note cat <book> <note-index>
+    note rm <book>
+    note rm <book> <note-index>
 ";
 
 #[derive(Debug, Deserialize)]
@@ -28,9 +32,10 @@ struct Args {
     cmd_ls: bool,
     cmd_edit: bool,
     cmd_cat: bool,
+    cmd_rm: bool,
     arg_book: Option<String>,
     arg_note: Option<String>,
-    arg_note_index: usize,
+    arg_note_index: Option<usize>,
 }
 
 fn main() {
@@ -41,8 +46,9 @@ fn main() {
     match args {
         Args { cmd_add: true, .. } => cmd::add::run(args.arg_book.unwrap(), args.arg_note),
         Args { cmd_ls: true, .. } => cmd::ls::run(args.arg_book),
-        Args { cmd_edit: true, .. } => cmd::edit::run(args.arg_book.unwrap(), args.arg_note_index, args.arg_note),
-        Args { cmd_cat: true, .. } => cmd::cat::run(args.arg_book.unwrap(), args.arg_note_index),
+        Args { cmd_edit: true, .. } => cmd::edit::run(args.arg_book.unwrap(), args.arg_note_index.unwrap(), args.arg_note),
+        Args { cmd_cat: true, .. } => cmd::cat::run(args.arg_book.unwrap(), args.arg_note_index.unwrap()),
+        Args { cmd_rm: true, .. } => cmd::rm::run(args.arg_book.unwrap(), args.arg_note_index),
         _ => process::exit(1)
     }
 }
