@@ -77,8 +77,9 @@ pub fn get_notebooks(conn: &Connection) -> Vec<Notebook> {
     let mut stmt = conn.prepare("
         select nb.id, nb.name, nb.time_created, count(n.id) as note_count
         from notebook nb
-        inner join note n on n.notebook_id = nb.id
+        left join note n on n.notebook_id = nb.id
         where nb.id is not null
+        group by nb.id
         ").unwrap();
 
     let rows = stmt.query_map(&[], |row| {
@@ -122,7 +123,7 @@ pub fn get_note(conn: &Connection, book_name: String, id: i32) -> Option<Note> {
     let note = conn.query_row("
         select n.id, n.note_id, n.notebook_id, n.contents, n.time_created, n.time_modified
         from note n
-        inner join notebook nb on nb.id = note.notebook_id
+        inner join notebook nb on nb.id = n.notebook_id
         where n.id = ?1
         and nb.name = ?2
         ", &[&id, &book_name], |row| {

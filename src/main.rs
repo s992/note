@@ -39,7 +39,7 @@ struct Args {
     cmd_rm: bool,
     arg_book: Option<String>,
     arg_note: Option<String>,
-    arg_note_index: Option<usize>,
+    arg_note_index: Option<i32>,
 }
 
 fn main() {
@@ -55,9 +55,9 @@ fn main() {
     match args {
         Args { cmd_add: true, .. } => cmd::add::run(&conn, args.arg_book.unwrap(), args.arg_note),
         Args { cmd_ls: true, .. } => cmd::ls::run(&conn, args.arg_book),
-        Args { cmd_edit: true, .. } => cmd::edit::run(args.arg_book.unwrap(), args.arg_note_index.unwrap(), args.arg_note),
-        Args { cmd_cat: true, .. } => cmd::cat::run(args.arg_book.unwrap(), args.arg_note_index.unwrap()),
-        Args { cmd_rm: true, .. } => cmd::rm::run(args.arg_book.unwrap(), args.arg_note_index),
+//        Args { cmd_edit: true, .. } => cmd::edit::run(args.arg_book.unwrap(), args.arg_note_index.unwrap(), args.arg_note),
+        Args { cmd_cat: true, .. } => cmd::cat::run(&conn, args.arg_book.unwrap(), args.arg_note_index.unwrap()),
+//        Args { cmd_rm: true, .. } => cmd::rm::run(args.arg_book.unwrap(), args.arg_note_index),
         _ => process::exit(1)
     }
 }
