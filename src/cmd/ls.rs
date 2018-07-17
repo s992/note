@@ -1,21 +1,23 @@
 use termion::{color, style};
+use rusqlite::Connection;
 use lib;
+use db;
 
-pub fn run(book: Option<String>) -> () {
+pub fn run(conn: &Connection, book: Option<String>) -> () {
     match book {
         Some(book) => {
-            let notes = lib::get_notes(&book).unwrap();
+            let notes = db::get_notes(&conn, &book);
             print_notes(book, notes)
         }
         None => {
-            let books = lib::get_books().unwrap();
+            let books = db::get_notebooks(&conn);
             print_books(books);
         }
     };
 }
 
-fn print_notes(book: String, mut notes: Vec<lib::Note>) -> () {
-    notes.sort_by_key(|n| n.index);
+fn print_notes(book: String, mut notes: Vec<db::Note>) -> () {
+    notes.sort_by_key(|n| n.note_id);
 
     println!("{blue}{b}{count} notes for {book}:{reset}",
              count = notes.len(),
@@ -27,7 +29,7 @@ fn print_notes(book: String, mut notes: Vec<lib::Note>) -> () {
     println!();
 
     for mut note in notes {
-        let index = note.index;
+        let index = note.note_id;
         let mut line = note.first_line();
 
         if line.len() > 80 {
@@ -50,7 +52,7 @@ fn print_notes(book: String, mut notes: Vec<lib::Note>) -> () {
     }
 }
 
-fn print_books(books: Vec<lib::Book>) -> () {
+fn print_books(books: Vec<db::Notebook>) -> () {
     println!("{blue}{b}{count} books:{reset}",
              count = books.len(),
              blue = color::Fg(color::Blue),
@@ -60,7 +62,7 @@ fn print_books(books: Vec<lib::Book>) -> () {
     println!();
 
     for mut book in books {
-        let count = book.note_count();
+        let count = book.note_count;
         let name = book.name;
 
         println!("{book} ({y}{count}{reset})",
