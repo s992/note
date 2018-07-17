@@ -1,7 +1,7 @@
 use std::io::Result;
 use std::path::PathBuf;
 use rusqlite::Connection;
-use time::{Timespec, get_time};
+use time::Timespec;
 use lib;
 
 #[derive(Debug)]
@@ -45,18 +45,24 @@ pub fn get_db_path() -> Result<PathBuf> {
     Ok(path)
 }
 
-pub fn get_notebook(conn: &Connection, name: String) -> Option<Notebook> {
+pub fn get_notebook(conn: &Connection, name: &String) -> Option<Notebook> {
+    let exists = notebook_exists(&conn, name);
+
+    if !exists {
+        return None;
+    }
+
     let notebook = conn.query_row("
         select nb.id, nb.name, nb.time_created, count(n.id) as note_count
         from notebook nb
-        inner join note n on n.notebook_id = nb.id
+        left join note n on n.notebook_id = nb.id
         where name = ?1
-        ", &[&name], |row| {
+        ", &[name], |row| {
         Notebook { id: row.get(0), name: row.get(1), time_created: row.get(2), note_count: row.get(3) }
     });
 
     match notebook {
-        Err(e) => None,
+        Err(_) => None,
         Ok(notebook) => Some(notebook)
     }
 }
@@ -131,7 +137,7 @@ pub fn get_note(conn: &Connection, book_name: String, id: i32) -> Option<Note> {
     });
 
     match note {
-        Err(e) => None,
+        Err(_) => None,
         Ok(note) => Some(note)
     }
 }
@@ -171,7 +177,7 @@ pub fn get_notes(conn: &Connection, book_name: &String) -> Vec<Note> {
 
 pub fn create_note(conn: &Connection, note: Note) -> i64 {
     let insert = conn.execute("
-        insert into note (note_id, notebook_id, contents, time_created, time_modified))
+        insert into note (note_id, notebook_id, contents, time_created, time_modified)
         values (?1, ?2, ?3, ?4, ?5)
     ", &[
         &note.note_id,
@@ -187,6 +193,22 @@ pub fn create_note(conn: &Connection, note: Note) -> i64 {
     };
 
     id
+}
+
+pub fn get_next_note_id(conn: &Connection, book: &String) -> i32 {
+    let result = conn.query_row("
+        select coalesce(max(n.note_id), 0) + 1
+        from note n
+        inner join notebook nb on nb.id = n.notebook_id
+        where nb.name = ?1
+        ", &[book], |row| {
+        row.get(0)
+    });
+
+    match result {
+        Err(_) => 1,
+        Ok(count) => count
+    }
 }
 
 fn create_tables(conn: &Connection) -> Result<()> {
@@ -229,8 +251,17 @@ fn count_notebooks(conn: &Connection) -> i32 {
     });
 
     match result {
-        Err(e) => 0,
+        Err(_) => 0,
         Ok(count) => count
+    }
+}
+
+fn notebook_exists(conn: &Connection, name: &String) -> bool {
+    let mut stmt = conn.prepare("select 1 from notebook where name = ?1").unwrap();
+
+    match stmt.exists(&[name]) {
+        Err(_) => false,
+        Ok(exists) => exists
     }
 }
 
