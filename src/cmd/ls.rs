@@ -1,7 +1,7 @@
 use termion::{color, style};
 use lib;
 
-pub fn run(book: Option<String>) -> () {
+pub fn run(book: Option<String>, all: bool) -> () {
     match book {
         Some(book) => {
             let notes = lib::get_notes(&book).unwrap();
@@ -9,7 +9,15 @@ pub fn run(book: Option<String>) -> () {
         }
         None => {
             let books = lib::get_books().unwrap();
-            print_books(books);
+
+            if all {
+                for book in books {
+                    let notes = lib::get_notes(&book.name).unwrap();
+                    print_notes(book.name, notes);
+                }
+            } else {
+                print_books(books);
+            }
         }
     };
 }
@@ -17,14 +25,13 @@ pub fn run(book: Option<String>) -> () {
 fn print_notes(book: String, mut notes: Vec<lib::Note>) -> () {
     notes.sort_by_key(|n| n.index);
 
-    println!("{blue}{b}{count} notes for {book}:{reset}",
+    println!("{blue}{count} note(s) for {b}{book}{reset}:",
              count = notes.len(),
              book = book,
              blue = color::Fg(color::Blue),
              b = style::Bold,
              reset = style::Reset,
     );
-    println!();
 
     for mut note in notes {
         let index = note.index;
@@ -32,14 +39,15 @@ fn print_notes(book: String, mut notes: Vec<lib::Note>) -> () {
 
         if line.len() > 80 {
             line.truncate(77);
-            line = format!("{line}{y}{bold}...",
+            line = format!("{line}{y}{bold}...{reset}",
                            line = line,
                            y = color::Fg(color::Yellow),
                            bold = style::Bold,
+                           reset = style::Reset,
             );
         }
 
-        println!("{bold}{y}({reset_color}{idx}{y}){reset_color}{reset}  {note}",
+        println!("  {bold}{y}({reset_color}{idx}{y}){reset_color}{reset}  {note}",
                  y = color::Fg(color::Yellow),
                  bold = style::Bold,
                  reset_color = color::Fg(color::Reset),
@@ -48,6 +56,8 @@ fn print_notes(book: String, mut notes: Vec<lib::Note>) -> () {
                  note = line,
         )
     }
+
+    println!();
 }
 
 fn print_books(books: Vec<lib::Book>) -> () {
