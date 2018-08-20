@@ -1,11 +1,15 @@
 use std::fs::{OpenOptions};
 use std::io::{Result, prelude::*};
 use std::path::PathBuf;
+use process;
 use lib;
 
 pub fn run(book: String, index: usize, note: Option<String>) -> () {
     let mut path = match lib::get_book_path(&book) {
-        Err(e) => panic!("Couldn't load book. Error: {}", e),
+        Err(e) => {
+            println!("Couldn't load book '{}'. Error: {}", book, e);
+            process::exit(1)
+        },
         Ok(path) => path
     };
 

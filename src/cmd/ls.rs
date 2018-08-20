@@ -1,10 +1,14 @@
+use process;
 use termion::{color, style};
 use lib;
 
 pub fn run(book: Option<String>, all: bool) -> () {
     match book {
         Some(book) => {
-            let notes = lib::get_notes(&book).unwrap();
+            let notes = lib::get_notes(&book).unwrap_or_else(|e| {
+                println!("Couldn't find book '{}': {}", book, e);
+                process::exit(1)
+            });
             print_notes(book, notes)
         }
         None => {
