@@ -21,6 +21,7 @@ Usage:
     note edit <book> <note-index> -c <note>
     note ls [--all]
     note ls <book>
+    note lsa
     note cat <book> <note-index>
     note rm <book>
     note rm <book> <note-index>
@@ -33,6 +34,7 @@ struct Args {
     cmd_edit: bool,
     cmd_cat: bool,
     cmd_rm: bool,
+    cmd_lsa: bool,
     arg_book: Option<String>,
     arg_note: Option<String>,
     arg_note_index: Option<usize>,
@@ -50,6 +52,7 @@ fn main() {
         Args { cmd_edit: true, .. } => cmd::edit::run(args.arg_book.unwrap(), args.arg_note_index.unwrap(), args.arg_note),
         Args { cmd_cat: true, .. } => cmd::cat::run(args.arg_book.unwrap(), args.arg_note_index.unwrap()),
         Args { cmd_rm: true, .. } => cmd::rm::run(args.arg_book.unwrap(), args.arg_note_index),
+        Args { cmd_lsa: true, .. } => cmd::ls::run(None, true),
         _ => process::exit(1)
     }
 }
