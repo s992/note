@@ -4,5 +4,5 @@ clean:
 build: clean
 	cargo build
 
-install: build
+install: clean
 	cargo install --path . --force
