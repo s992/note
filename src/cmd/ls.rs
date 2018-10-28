@@ -2,8 +2,8 @@ extern crate util;
 extern crate termion;
 
 use std::process;
-use ls::termion::{color, style};
-use ls::util::util::{get_notes, get_books, Note, Book};
+use termion::{color, style};
+use util::{get_notes, get_books, Note, Book};
 
 pub fn run(book: Option<String>, all: bool) -> () {
     match book {

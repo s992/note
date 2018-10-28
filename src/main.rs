@@ -1,7 +1,6 @@
 #[macro_use]
 extern crate serde_derive;
 extern crate docopt;
-extern crate termion;
 extern crate cmd;
 
 use std::process;

@@ -1,7 +1,7 @@
 extern crate util;
 
 use std::process;
-use cat::util::util::get_note;
+use util::get_note;
 
 pub fn run(book: String, index: usize) -> () {
     match get_note(&book, index) {

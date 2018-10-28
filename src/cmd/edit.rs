@@ -4,7 +4,7 @@ use std::fs::{OpenOptions};
 use std::io::{Result, prelude::*};
 use std::path::PathBuf;
 use std::process;
-use edit::util::util::{get_book_path, open_editor};
+use util::{get_book_path, open_editor};
 
 pub fn run(book: String, index: usize, note: Option<String>) -> () {
     let mut path = match get_book_path(&book) {

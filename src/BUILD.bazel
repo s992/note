@@ -3,7 +3,7 @@ load("@io_bazel_rules_rust//rust:rust.bzl", "rust_binary", "rust_library")
 
 rust_library(
   name = "util",
-  srcs = [":lib.rs", ":util.rs"],
+  srcs = [":util.rs"],
 )
 
 rust_binary(
@@ -13,7 +13,6 @@ rust_binary(
     "//cargo:docopt",
     "//cargo:serde",
     "//cargo:serde_derive",
-    "//cargo:termion",
     "//src/cmd",
     ":util",
   ],

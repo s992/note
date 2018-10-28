@@ -5,7 +5,7 @@ use std::io::{Result, prelude::*};
 use std::path::PathBuf;
 use std::error::Error;
 use std::process;
-use add::util::util::{get_next_index, get_book_path, editor};
+use util::{get_next_index, get_book_path, editor};
 
 pub fn run(book: String, note: Option<String>) -> () {
     let path = match create_book_if_needed(&book) {

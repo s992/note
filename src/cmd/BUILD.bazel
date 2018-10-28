@@ -2,18 +2,50 @@ package(default_visibility = ["//visibility:public"])
 load("@io_bazel_rules_rust//rust:rust.bzl", "rust_library")
 
 rust_library(
-  name = "cmd",
-  srcs = [
-    ":add.rs",
-    ":cat.rs",
-    ":cmd.rs",
-    ":edit.rs",
-    ":ls.rs",
-    ":rm.rs",
-  ],
+  name = "add",
+  srcs = [":add.rs"],
+  deps = ["//src:util"],
+)
+
+rust_library(
+  name = "cat",
+  srcs = [":cat.rs"],
+  deps = ["//src:util"],
+)
+
+rust_library(
+  name = "edit",
+  srcs = [":edit.rs"],
+  deps = ["//src:util"],
+)
+
+rust_library(
+  name = "ls",
+  srcs = [":ls.rs"],
   deps = [
+    "//src:util",
     "//cargo:termion",
+  ],
+)
+
+rust_library(
+  name = "rm",
+  srcs = [":rm.rs"],
+  deps = [
     "//cargo:text_io",
     "//src:util",
+  ],
+)
+
+rust_library(
+  name = "cmd",
+  srcs = [":cmd.rs"],
+  deps = [
+    "//src:util",
+    ":add",
+    ":cat",
+    ":edit",
+    ":ls",
+    ":rm",
   ],
 )

@@ -1,7 +1,9 @@
+#[macro_use]
+extern crate text_io;
 extern crate util;
 
 use std::fs::{remove_file, remove_dir_all};
-use rm::util::util::{get_book_path, get_note};
+use util::{get_book_path, get_note};
 
 pub fn run(book: String, index: Option<usize>) -> () {
     match index {
