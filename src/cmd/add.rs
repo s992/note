@@ -1,9 +1,11 @@
+extern crate util;
+
 use std::fs::{File, create_dir_all};
 use std::io::{Result, prelude::*};
 use std::path::PathBuf;
 use std::error::Error;
-use process;
-use lib;
+use std::process;
+use add::util::util::{get_next_index, get_book_path, editor};
 
 pub fn run(book: String, note: Option<String>) -> () {
     let path = match create_book_if_needed(&book) {
@@ -14,7 +16,7 @@ pub fn run(book: String, note: Option<String>) -> () {
         Ok(path) => path
     };
 
-    let idx = lib::get_next_index(book).unwrap();
+    let idx = get_next_index(book).unwrap();
 
     match save_note(path, idx, note) {
         Err(e) => {
@@ -26,7 +28,7 @@ pub fn run(book: String, note: Option<String>) -> () {
 }
 
 fn create_book_if_needed(book: &String) -> Result<PathBuf> {
-    let path = lib::get_book_path(&book.to_string())?;
+    let path = get_book_path(&book.to_string())?;
     create_dir_all(&path)?;
 
     Ok(path)
@@ -47,7 +49,7 @@ fn save_note(mut path: PathBuf, index: usize, note: Option<String>) -> Result<()
     match note {
         Some(n) => file.write_all(n.as_bytes())?,
         None => {
-            let content = lib::editor();
+            let content = editor();
             file.write_all(content.as_bytes())?
         }
     };

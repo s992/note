@@ -1,5 +1,7 @@
+extern crate util;
+
 use std::fs::{remove_file, remove_dir_all};
-use lib;
+use rm::util::util::{get_book_path, get_note};
 
 pub fn run(book: String, index: Option<usize>) -> () {
     match index {
@@ -9,7 +11,7 @@ pub fn run(book: String, index: Option<usize>) -> () {
 }
 
 fn delete_book(book: String) -> () {
-    let path = match lib::get_book_path(&book) {
+    let path = match get_book_path(&book) {
         Err(e) => panic!("Unable to find book: {}", e),
         Ok(path) => path
     };
@@ -25,7 +27,7 @@ fn delete_book(book: String) -> () {
 }
 
 fn delete_note(book: String, index: usize) -> () {
-    let note = match lib::get_note(&book, index) {
+    let note = match get_note(&book, index) {
         Err(e) => panic!("Unable to find note: {}", e),
         Ok(note) => note
     };

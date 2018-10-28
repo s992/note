@@ -1,8 +1,10 @@
-use process;
-use lib;
+extern crate util;
+
+use std::process;
+use cat::util::util::get_note;
 
 pub fn run(book: String, index: usize) -> () {
-    match lib::get_note(&book, index) {
+    match get_note(&book, index) {
         Err(e) => {
             println!("Unable to read note {} from book '{}': {}", index, book, e);
             process::exit(1)

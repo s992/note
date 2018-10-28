@@ -1,22 +1,25 @@
-use process;
-use termion::{color, style};
-use lib;
+extern crate util;
+extern crate termion;
+
+use std::process;
+use ls::termion::{color, style};
+use ls::util::util::{get_notes, get_books, Note, Book};
 
 pub fn run(book: Option<String>, all: bool) -> () {
     match book {
         Some(book) => {
-            let notes = lib::get_notes(&book).unwrap_or_else(|e| {
+            let notes = get_notes(&book).unwrap_or_else(|e| {
                 println!("Couldn't find book '{}': {}", book, e);
                 process::exit(1)
             });
             print_notes(book, notes)
         }
         None => {
-            let books = lib::get_books().unwrap();
+            let books = get_books().unwrap();
 
             if all {
                 for book in books {
-                    let notes = lib::get_notes(&book.name).unwrap();
+                    let notes = get_notes(&book.name).unwrap();
                     print_notes(book.name, notes);
                 }
             } else {
@@ -26,7 +29,7 @@ pub fn run(book: Option<String>, all: bool) -> () {
     };
 }
 
-fn print_notes(book: String, mut notes: Vec<lib::Note>) -> () {
+fn print_notes(book: String, mut notes: Vec<Note>) -> () {
     notes.sort_by_key(|n| n.index);
 
     println!("{blue}{count} note(s) for {b}{book}{reset}:",
@@ -64,7 +67,7 @@ fn print_notes(book: String, mut notes: Vec<lib::Note>) -> () {
     println!();
 }
 
-fn print_books(books: Vec<lib::Book>) -> () {
+fn print_books(books: Vec<Book>) -> () {
     println!("{blue}{b}{count} books:{reset}",
              count = books.len(),
              blue = color::Fg(color::Blue),

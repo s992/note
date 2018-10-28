@@ -1,11 +1,13 @@
+extern crate util;
+
 use std::fs::{OpenOptions};
 use std::io::{Result, prelude::*};
 use std::path::PathBuf;
-use process;
-use lib;
+use std::process;
+use edit::util::util::{get_book_path, open_editor};
 
 pub fn run(book: String, index: usize, note: Option<String>) -> () {
-    let mut path = match lib::get_book_path(&book) {
+    let mut path = match get_book_path(&book) {
         Err(e) => {
             println!("Couldn't load book '{}'. Error: {}", book, e);
             process::exit(1)
@@ -33,7 +35,7 @@ fn update_note(path: PathBuf, note: String) -> Result<()> {
 }
 
 fn edit_note(path: PathBuf) -> Result<()> {
-    lib::open_editor(&path)?;
+    open_editor(&path)?;
     Ok(())
 }
 

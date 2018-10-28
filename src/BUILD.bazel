@@ -1,0 +1,20 @@
+package(default_visibility = ["//visibility:public"])
+load("@io_bazel_rules_rust//rust:rust.bzl", "rust_binary", "rust_library")
+
+rust_library(
+  name = "util",
+  srcs = [":lib.rs", ":util.rs"],
+)
+
+rust_binary(
+  name = "note",
+  srcs = [":main.rs"],
+  deps = [
+    "//cargo:docopt",
+    "//cargo:serde",
+    "//cargo:serde_derive",
+    "//cargo:termion",
+    "//src/cmd",
+    ":util",
+  ],
+)

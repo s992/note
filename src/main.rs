@@ -1,15 +1,11 @@
 #[macro_use]
 extern crate serde_derive;
-#[macro_use]
-extern crate text_io;
 extern crate docopt;
 extern crate termion;
+extern crate cmd;
 
 use std::process;
 use docopt::Docopt;
-
-mod cmd;
-mod lib;
 
 const USAGE: &'static str = "\
 Note

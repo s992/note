@@ -1,0 +1,19 @@
+package(default_visibility = ["//visibility:public"])
+load("@io_bazel_rules_rust//rust:rust.bzl", "rust_library")
+
+rust_library(
+  name = "cmd",
+  srcs = [
+    ":add.rs",
+    ":cat.rs",
+    ":cmd.rs",
+    ":edit.rs",
+    ":ls.rs",
+    ":rm.rs",
+  ],
+  deps = [
+    "//cargo:termion",
+    "//cargo:text_io",
+    "//src:util",
+  ],
+)
